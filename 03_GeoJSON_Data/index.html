@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+</head>
+<style>
+    #map {
+        height: 60vh;
+        width: 30vw;
+    }
+
+    .rounded-image {
+        border-radius: 50%;
+    }
+</style>
+
+
+<body>
+    <div id="map"></div>
+</body>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+<script>
+    var map = L.map('map').setView([20.5937, 78.9629], 4);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    var geojsonfeatures = {
+        "type": "Feature",
+
+        "properties": {
+            "name": "Mumbai",
+            "amenity": "Wankhede Stadium",
+            "popup": "Sports Complex",
+            "description": "International cricket stadium"
+        },
+        "geometry": {
+            "type": "Point",
+            "coordinates": [72.8258, 18.9389]
+        }
+
+    };
+
+    L.geoJSON(geojsonfeatures).addTo(map).bindPopup(`<b>${geojsonfeatures.properties.amenity}</b>  <p>${geojsonfeatures.properties.popup + `<br>` + geojsonfeatures.properties.description}</p >`);
+
+    // array can also be pass to geoJSon layer
+    var myLines = [{
+        "type": "LineString",
+        "coordinates": [[72.8258, 18.9389], [73.8567, 18.5204]]
+    }];
+
+    // can also style the line
+    var myStyle = {
+        "color": "violet",
+        "wieght": "10",
+        opacity: 0.8
+    }
+
+    L.geoJSON(myLines, {
+        style: myStyle
+    }
+    ).addTo(map);
+
+    // we can use function to style
+    var states = [{
+        "type": "Feature",
+        "properties": { "party": "Republican" },
+        "geometry": {
+            "type": "Polygon",
+            "coordinates": [[
+                [-104.05, 48.99],
+                [-97.22, 48.98],
+                [-96.58, 45.94],
+                [-104.03, 45.94],
+                [-104.05, 48.99]
+            ]]
+        }
+    }, {
+        "type": "Feature",
+        "properties": { "party": "Democrat" },
+        "geometry": {
+            "type": "Polygon",
+            "coordinates": [[
+                [-109.05, 41.00],
+                [-102.06, 40.99],
+                [-102.03, 36.99],
+                [-109.04, 36.99],
+                [-109.05, 41.00]
+            ]]
+        }
+    }];
+
+    L.geoJSON(states, {
+        style: function (feature) {
+            switch (feature.properties.party) {
+                case 'Republican': return { color: "#ff0000" };
+                case 'Democrat': return { color: "#0000ff" };
+            }
+        }
+    }).addTo(map);
+
+    // controlling the visibilty of layer 
+    // note : using feature collection for more than on feature 
+    var state = {
+        "type": "FeatureCollection",
+        "features":
+            [
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "name": "Kerala",
+                        "show_on": true,
+                        "popup": "Kerala district"
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [76.2711, 10.8505]
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "name": "Uttar Pradesh",
+                        "show_on": true,
+                        "popup": "Uttar Pradesh District"
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [80.9462, 26.8467]
+                    }
+                }
+            ]
+    }
+    L.geoJSON(state, {
+        filter: function (feature, layer) {
+            return feature.properties.show_on;
+        },
+        onEachFeature: function (feature, layer) {
+            layer.bindPopup(feature.properties.popup)
+        }
+    }).addTo(map)
+
+
+</script>
+
+</html>
