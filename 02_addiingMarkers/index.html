@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markers</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+</head>
+<style>
+    #map {
+        height: 60vh;
+        width: 30vw;
+    }
+
+    .rounded-image {
+        border-radius: 50%;
+    }
+</style>
+
+
+<body>
+    <div id="map"></div>
+</body>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+<script>
+    var map = L.map('map').setView([20.5937, 78.9629], 4);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    // addind image to map
+    // var imageUrl = 'https://static.cricbuzz.com/a/img/v1/1080x608/i1/c818933/mumbai-indians-won-the-wpl-in-2023-and-2025.jpg',
+    //     imageBounds = [[18.15, 73.25],  // South-West (Pune district)
+    //     [19.35, 75.15]];
+    // L.imageOverlay(imageUrl, imageBounds, {
+    //     className: 'rounded-image'
+    // }).addTo(map);
+
+    // adding shapes 
+    var circle = L.circle([20.5937, 78.9629], {
+        color: 'red',
+        radius: 100000
+
+    }).addTo(map)
+
+    // adding popup for loaction
+    function onMapClick(e) {
+        var popup = L.popup().setLatLng([20.5937, 78.9629]).setContent("Hii, Wlecome to Pune").openOn(map);
+
+    }
+    map.on('click', onMapClick);
+
+    // adding our own img as markers
+    var myicon = L.icon({
+        iconUrl: 'https://cdn-icons-png.flaticon.com/128/447/447031.png',
+
+        iconSize: [24, 34],
+        iconAnchor: [12, 34], //this value should be less than the iconAnchor
+
+        popupAnchor: [0, -34],
+    });
+
+    L.marker([18.9582, 72.8321], { icon: myicon }).bindPopup('<b>Mumbai</b>').addTo(map);
+
+    // addding different markers to different locations
+    var leafIcon = L.Icon.extend({ //child class
+        // the values whixh will not change for markers 
+        options: {
+            // shadowUrl: 'leaf-shadow.png',
+            iconSize: [24, 34],
+            // shadowSize:   [50, 64],
+            iconAnchor: [12, 34],
+            // shadowAnchor: [4, 62],
+            popupAnchor: [0, -34]
+        }
+    });
+
+    // instance of class
+    var greenicon = new leafIcon({ iconUrl: "https://cdn-icons-png.flaticon.com/128/14035/14035502.png" }),
+        redicon = new leafIcon({ iconUrl: "https://cdn-icons-png.flaticon.com/128/684/684908.png" }),
+        yellowicon = new leafIcon({ iconUrl: "https://cdn-icons-png.flaticon.com/128/727/727606.png" });
+
+    const geodata = [
+        {
+            name: "kerala",
+            lat: 10.8505,
+            lng: 76.2711,
+            icon: greenicon,
+            capital: "Thiruvananthapuram"
+        },
+        {
+            name: "Delhi",
+            lat: 28.6139,
+            lng: 77.2090,
+            icon: redicon,
+            capital: "New Delhi"
+        },
+        {
+            name: "Uttar Pradesh",
+            lat: 26.8467,
+            lng: 80.9462,
+            icon: yellowicon,
+            capital: "Lucknow"
+
+        }
+    ]
+
+    geodata.forEach(element => {
+        console.log(element)
+        console.log("icon :" + element.icon)
+        L.marker([element.lat, element.lng], { icon: element.icon }).addTo(map).bindPopup(`<b>${element.name}</b><br><span>Capital: ${element.capital}</span>`);
+    });
+
+</script>
+
+</html>
